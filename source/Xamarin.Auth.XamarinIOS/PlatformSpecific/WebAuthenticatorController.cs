@@ -171,15 +171,21 @@ namespace Xamarin.Auth
 
 		void HandleError (object sender, AuthenticatorErrorEventArgs e)
 		{
-			var after = keepTryingAfterError ?
+			var after = keepTryingAfterError && authenticator.ShowUIErrors ?
 				(Action)BeginLoadingInitialUrl :
 				(Action)Cancel;
 
-			if (e.Exception != null) {
-				this.ShowError ("Authentication Error", e.Exception, after);
+			if (authenticator.ShowUIErrors)
+			{
+				if (e.Exception != null) {
+					this.ShowError("Authentication Error", e.Exception, after);
+				}
+				else {
+					this.ShowError("Authentication Error", e.Message, after);
+				}
 			}
 			else {
-				this.ShowError ("Authentication Error", e.Message, after);
+				after();
 			}
 		}
 
@@ -240,7 +246,7 @@ namespace Xamarin.Auth
 
 				webView.UserInteractionEnabled = true;
 
-				controller.authenticator.OnError (error.LocalizedDescription);
+				controller.authenticator.OnError(error.Code.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			}
 
 			public override void LoadingFinished (UIWebView webView)

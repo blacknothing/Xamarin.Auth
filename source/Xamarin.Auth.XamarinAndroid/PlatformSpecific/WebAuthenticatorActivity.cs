@@ -96,13 +96,18 @@ namespace Xamarin.Auth
 				Finish ();
 			};
 			state.Authenticator.Error += (s, e) => {
-				if (e.Exception != null) {
-					this.ShowError ("Authentication Error", e.Exception);
+				if (state.Authenticator.ShowUIErrors) {
+					if (e.Exception != null) {
+						this.ShowError("Authentication Error", e.Exception);
+					}
+					else {
+						this.ShowError("Authentication Error", e.Message);
+					}
+					BeginLoadingInitialUrl();
 				}
 				else {
-					this.ShowError ("Authentication Error", e.Message);
+					Finish();
 				}
-				BeginLoadingInitialUrl ();
 			};
 
 			//
@@ -192,6 +197,7 @@ namespace Xamarin.Auth
 			WebAuthenticatorActivity activity;
 			HashSet<SslCertificate> sslContinue;
 			Dictionary<SslCertificate, List<SslErrorHandler>> inProgress;
+			bool errorEncountered;
 
 			public Client (WebAuthenticatorActivity activity)
 			{
@@ -205,6 +211,8 @@ namespace Xamarin.Auth
 
 			public override void OnPageStarted (WebView view, string url, global::Android.Graphics.Bitmap favicon)
 			{
+				if (errorEncountered) return;
+
 				var uri = new Uri (url);
 				activity.state.Authenticator.OnPageLoading (uri);
 				activity.BeginProgress (uri.Authority);
@@ -212,9 +220,20 @@ namespace Xamarin.Auth
 
 			public override void OnPageFinished (WebView view, string url)
 			{
+				if (errorEncountered) return;
+
 				var uri = new Uri (url);
 				activity.state.Authenticator.OnPageLoaded (uri);
 				activity.EndProgress ();
+			}
+
+			[Obsolete]
+			public override void OnReceivedError(WebView view, ClientError errorCode, string description, string failingUrl)
+			{
+				errorEncountered = true;
+				view.Enabled = false;
+				activity.Finish();
+				activity.state.Authenticator.OnError(errorCode.ToString());
 			}
 
 			class SslCertificateEqualityComparer
@@ -262,6 +281,13 @@ namespace Xamarin.Auth
 
 			public override void OnReceivedSslError (WebView view, SslErrorHandler handler, SslError error)
 			{
+				if (!activity.state.Authenticator.ShowUIErrors) {
+					errorEncountered = true;
+					activity.Finish();
+					activity.state.Authenticator.OnError("ssl_trust_failure");
+					return;
+				}
+
 				if (sslContinue == null) {
 					var certComparer = new SslCertificateEqualityComparer();
 					sslContinue = new HashSet<SslCertificate> (certComparer);
