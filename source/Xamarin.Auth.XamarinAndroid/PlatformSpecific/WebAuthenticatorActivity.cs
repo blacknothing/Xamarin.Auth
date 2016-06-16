@@ -113,12 +113,15 @@ namespace Xamarin.Auth
 			//
 			// Build the UI
 			//
-			webView = new WebView (this) {
-				Id = 42,
-			};
+			webView = OnCreateContentView();
+
+			if (webView == null)
+			{
+				throw new InvalidOperationException("No WebView was returned from OnCreateContentView");
+			}
+
 			webView.Settings.JavaScriptEnabled = true;
 			webView.SetWebViewClient (new Client (this));
-			SetContentView (webView);
 
 			//
 			// Restore the UI state or start over
@@ -134,6 +137,21 @@ namespace Xamarin.Auth
 			}
 		}
 
+		/// <summary>
+		/// If you want to use your own layout when authenticating, the extending class should override
+		/// this method and return the WebView that has been created.  SetContentView(...) must be called
+		/// in here!
+		/// </summary>
+		/// <returns>The WebView that has been created for use by the authenticator.</returns>
+		protected virtual WebView OnCreateContentView()
+		{
+			var webView = new WebView(this)
+			{
+				Id = 42,
+			};
+			SetContentView(webView);
+			return webView;
+		}
 
 		# region
 		///-------------------------------------------------------------------------------------------------
@@ -171,6 +189,16 @@ namespace Xamarin.Auth
 			}
 		}
 
+		public override bool OnNavigateUp()
+		{
+			if (state.Authenticator.AllowCancel)
+			{
+				state.Authenticator.OnCancelled();
+			}
+
+			return base.OnNavigateUp();
+		}
+
 		public override Java.Lang.Object OnRetainNonConfigurationInstance ()
 		{
 			return state;
@@ -182,12 +210,12 @@ namespace Xamarin.Auth
 			webView.SaveState (outState);
 		}
 
-		void BeginProgress (string message)
+		protected virtual void BeginProgress (string message)
 		{
 			webView.Enabled = false;
 		}
 
-		void EndProgress ()
+		protected virtual void EndProgress ()
 		{
 			webView.Enabled = true;
 		}

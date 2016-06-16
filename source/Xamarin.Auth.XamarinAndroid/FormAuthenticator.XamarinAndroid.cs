@@ -39,9 +39,9 @@ namespace Xamarin.Auth
 		/// <returns>
 		/// The UI that needs to be presented.
 		/// </returns>
-		protected override AuthenticateUIType GetPlatformUI(UIContext context)
+		protected override AuthenticateUIType GetPlatformUI(UIContext context, Type customUiType = null)
 		{
-			var i = new global::Android.Content.Intent(context, typeof(FormAuthenticatorActivity));
+			var i = new global::Android.Content.Intent(context, customUiType ?? typeof(FormAuthenticatorActivity));
 			var state = new FormAuthenticatorActivity.State
 			{
 				Authenticator = this,

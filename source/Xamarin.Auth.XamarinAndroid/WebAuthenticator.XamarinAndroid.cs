@@ -49,9 +49,9 @@ namespace Xamarin.Auth
 		/// <returns>
 		/// The UI that needs to be presented.
 		/// </returns>
-		protected override AuthenticateUIType GetPlatformUI(UIContext context)
+		protected override AuthenticateUIType GetPlatformUI(UIContext context, Type customUiType = null)
 		{
-			var i = new global::Android.Content.Intent(context, typeof(WebAuthenticatorActivity));
+			var i = new global::Android.Content.Intent(context, customUiType ?? typeof(WebAuthenticatorActivity));
 			i.PutExtra("ClearCookies", ClearCookiesBeforeLogin);
 			var state = new WebAuthenticatorActivity.State
 			{
