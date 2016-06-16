@@ -3,8 +3,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Xamarin.Auth
 {
     /// <summary>
@@ -12,6 +10,8 @@ namespace Xamarin.Auth
     /// </summary>
     public sealed partial class WebAuthenticatorPage : Page
     {
+        private WebRedirectAuthenticator _auth;
+
         public WebAuthenticatorPage()
         {
             this.InitializeComponent();
@@ -19,12 +19,12 @@ namespace Xamarin.Auth
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            OAuth2Authenticator auth = (OAuth2Authenticator)e.Parameter;
+            _auth = (WebRedirectAuthenticator)e.Parameter;
 
-            auth.Completed += auth_Completed;
-            auth.Error += OnAuthError;
+            browser.NavigationStarting += Web_NavigationStarting;
+            browser.NavigationCompleted += Web_NavigationCompleted;
 
-            Uri uri = await auth.GetInitialUrlAsync();
+            Uri uri = await _auth.GetInitialUrlAsync();
             this.browser.Source = uri;
 
             /*
@@ -46,14 +46,14 @@ namespace Xamarin.Auth
             base.OnNavigatedTo(e);
         }
 
-        private void OnAuthError(object sender, AuthenticatorErrorEventArgs e)
+        private void Web_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            throw new NotImplementedException();
+            _auth.OnPageLoaded(args.Uri);
         }
 
-        private void auth_Completed(object sender, AuthenticatorCompletedEventArgs e)
+        private void Web_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
-            throw new NotImplementedException();
+            _auth.OnPageLoading(args.Uri);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
