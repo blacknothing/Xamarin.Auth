@@ -215,6 +215,12 @@ namespace Xamarin.Auth
 
 				var uri = new Uri (url);
 				activity.state.Authenticator.OnPageLoading (uri);
+
+				if (!activity.state.Authenticator.IsLoadingEnabled) {
+					activity.webView.StopLoading();
+					return;
+				}
+
 				activity.BeginProgress (uri.Authority);
 			}
 

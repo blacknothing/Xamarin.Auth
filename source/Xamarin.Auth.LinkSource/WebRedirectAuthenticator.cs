@@ -34,6 +34,12 @@ namespace Xamarin.Auth
 		Uri redirectUrl;
 
 		/// <summary>
+		/// Gets or sets whether the redirect url specified should be loaded into the WebView.
+		/// </summary>
+		/// <value>If true, the redirect URL is loaded into the WebView (backwards-compatible behaviour), otherwise the URL is not loaded.</value>
+		public bool LoadRedirectUrl { get; set; } = true;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="Xamarin.Auth.WebRedirectAuthenticator"/> class.
 		/// </summary>
 		/// <param name='initialUrl'>
@@ -132,7 +138,8 @@ namespace Xamarin.Auth
 			//
 			// Watch for the redirect
 			//
-			if (UrlMatchesRedirect (url)) {
+			if (UrlMatchesRedirect (url) && IsLoadingEnabled) {
+				IsLoadingEnabled = false;
 				OnRedirectPageLoaded (url, query, fragment);
 			}
 		}

@@ -66,6 +66,13 @@ namespace Xamarin.Auth
 		}
 
 		/// <summary>
+		/// Gets or sets whether loading URLs into the web view is enabled.
+		/// Used to disable further requests once the redirect url has been detected in OnPageLoading()
+		/// </summary>
+		/// <value>True if pages should be loaded, false if otherwise.</value>
+		internal bool IsLoadingEnabled { get; set; } = true;
+
+		/// <summary>
 		/// Method that returns the initial URL to be displayed in the web browser.
 		/// </summary>
 		/// <returns>
