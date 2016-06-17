@@ -136,6 +136,14 @@
     <Compile Include="..\Xamarin.Auth.LinkSource\AccountStore.Async.cs">
       <Link>AccountStore.Async.cs</Link>
     </Compile>
+    <Compile Include="..\Xamarin.Auth.LinkSource\Color.cs">
+      <Link>Color.cs</Link>
+    </Compile>
+    <Compile Include="..\Xamarin.Auth.LinkSource\AuthenticatorUiOptions.cs">
+      <Link>AuthenticatorUiOptions.cs</Link>
+    </Compile>
+    <Compile Include="PlatformSpecific\Color.cs" />
+    <Compile Include="PlatformSpecific\AuthenticatorUiOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

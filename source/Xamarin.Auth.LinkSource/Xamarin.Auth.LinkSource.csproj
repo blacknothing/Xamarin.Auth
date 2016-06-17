@@ -86,6 +86,8 @@
     <Compile Include="AccountStore.Async.cs">
       <DependentUpon>AccountStore.cs</DependentUpon>
     </Compile>
+    <Compile Include="Color.cs" />
+    <Compile Include="AuthenticatorUiOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -35,6 +35,7 @@ namespace Xamarin.Auth
 	public class WebAuthenticatorActivity : global::Android.Accounts.AccountAuthenticatorActivity
 #endif
 	{
+		AuthenticatorUiOptions uiOptions;
 		WebView webView;
 
 		internal class State : Java.Lang.Object
@@ -61,6 +62,8 @@ namespace Xamarin.Auth
 				Finish ();
 				return;
 			}
+
+			uiOptions = Intent.GetSerializableExtra("UiOptions") as AuthenticatorUiOptions;
 
 			Title = state.Authenticator.Title;
 
@@ -149,6 +152,11 @@ namespace Xamarin.Auth
 			{
 				Id = 42,
 			};
+
+			if (uiOptions != null) {
+				webView.SetBackgroundColor(uiOptions.LoadingBackgroundColor.ToNativeColor());
+			}
+
 			SetContentView(webView);
 			return webView;
 		}

@@ -39,9 +39,9 @@ namespace Xamarin.Auth
 		/// <returns>
 		/// The UI that needs to be presented.
 		/// </returns>
-		public AuthenticateUIType GetUI()
+		public AuthenticateUIType GetUI(AuthenticatorUiOptions uiOptions = null)
 		{
-			return GetPlatformUI();
+			return GetPlatformUI(uiOptions);
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace Xamarin.Auth
 		/// <returns>
 		/// The UI that needs to be presented.
 		/// </returns>
-		protected abstract AuthenticateUIType GetPlatformUI();
+		protected abstract AuthenticateUIType GetPlatformUI(AuthenticatorUiOptions uiOptions = null);
 	}
 }
 

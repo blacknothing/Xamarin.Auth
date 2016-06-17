@@ -32,7 +32,7 @@ namespace Xamarin.Auth
 	public abstract partial class FormAuthenticator : Authenticator
 #endif
 	{
-		protected override AuthenticateUIType GetPlatformUI ()
+		protected override AuthenticateUIType GetPlatformUI (AuthenticatorUiOptions uiOptions = null)
 		{
 			return new UIKit.UINavigationController (new FormAuthenticatorController (this));
 		}

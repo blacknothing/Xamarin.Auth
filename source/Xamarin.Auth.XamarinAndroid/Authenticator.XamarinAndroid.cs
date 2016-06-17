@@ -34,13 +34,13 @@ namespace Xamarin.Auth
 #endif
 	{
 		UIContext context;
-		public AuthenticateUIType GetUI(UIContext context, Type customUiType = null)
+		public AuthenticateUIType GetUI(UIContext context, AuthenticatorUiOptions uiOptions = null, Type customUiType = null)
 		{
 			this.context = context;
-			return GetPlatformUI(context, customUiType);
+			return GetPlatformUI(context, uiOptions, customUiType);
 		}
 
-		protected abstract AuthenticateUIType GetPlatformUI(UIContext context, Type customUiType = null);
+		protected abstract AuthenticateUIType GetPlatformUI(UIContext context, AuthenticatorUiOptions uiOptions = null, Type customUiType = null);
 	}
 }
 

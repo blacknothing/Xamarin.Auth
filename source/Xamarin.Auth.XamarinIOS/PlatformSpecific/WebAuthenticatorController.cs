@@ -35,6 +35,8 @@ namespace Xamarin.Auth
 	{
 		protected WebAuthenticator authenticator;
 
+		private AuthenticatorUiOptions _uiOptions;
+
 		UIWebView webView;
 		UIActivityIndicatorView activity;
 		UIView authenticatingView;
@@ -45,9 +47,10 @@ namespace Xamarin.Auth
 
 		bool keepTryingAfterError = true;
 
-		public WebAuthenticatorController (WebAuthenticator authenticator)
+		public WebAuthenticatorController (WebAuthenticator authenticator, AuthenticatorUiOptions uiOptions = null)
 		{
 			this.authenticator = authenticator;
+			_uiOptions = uiOptions;
 
 			authenticator.Error += HandleError;
 			authenticator.BrowsingCompleted += HandleBrowsingCompleted;
@@ -78,9 +81,12 @@ namespace Xamarin.Auth
 			activity = new UIActivityIndicatorView (UIActivityIndicatorViewStyle.White);
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem (activity);
 
-			webView = new UIWebView (View.Bounds) {
-				Delegate = new WebViewDelegate (this),
+			webView = new UIWebView(View.Bounds)
+			{
+				Delegate = new WebViewDelegate(this),
 				AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
+				Opaque = false,
+				BackgroundColor = _uiOptions?.LoadingBackgroundColor.ToUIColor() ?? UIColor.White
 			};
 			View.AddSubview (webView);
 			View.BackgroundColor = UIColor.Black;
@@ -259,6 +265,10 @@ namespace Xamarin.Auth
 				if (url != lastUrl && !controller.authenticator.HasCompleted) {
 					lastUrl = url;
 					controller.authenticator.OnPageLoaded (url);
+
+					if (controller._uiOptions?.LoadedBackgroundColor != null) {
+						UIView.Animate(TransitionTime, TransitionTime, UIViewAnimationOptions.CurveEaseIn, () => webView.BackgroundColor = controller._uiOptions.LoadedBackgroundColor.ToUIColor(), () => { });
+					}
 				}
 			}
 		}

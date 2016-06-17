@@ -51,9 +51,9 @@ namespace Xamarin.Auth
 		/// <returns>
 		/// The UI that needs to be presented.
 		/// </returns>
-		protected override AuthenticateUIType GetPlatformUI()
+		protected override AuthenticateUIType GetPlatformUI(AuthenticatorUiOptions uiOptions = null)
 		{
-			return new UIKit.UINavigationController(new WebAuthenticatorController(this));
+			return new UIKit.UINavigationController(new WebAuthenticatorController(this, uiOptions));
 		}
 	}
 }

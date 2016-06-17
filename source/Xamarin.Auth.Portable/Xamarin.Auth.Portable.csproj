@@ -133,6 +133,12 @@
     <Compile Include="System\Type.cs" />
     <Compile Include="AccountStore.Portable.cs" />
     <Compile Include="WebAuthenticator.Portable.cs" />
+    <Compile Include="..\Xamarin.Auth.LinkSource\Color.cs">
+      <Link>Color.cs</Link>
+    </Compile>
+    <Compile Include="..\Xamarin.Auth.LinkSource\AuthenticatorUiOptions.cs">
+      <Link>AuthenticatorUiOptions.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
