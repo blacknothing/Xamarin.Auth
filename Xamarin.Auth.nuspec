@@ -12,7 +12,7 @@
 		http://semver.org/
 		-->
 		<version>
-			0.0.2
+			0.0.3
 		</version>
 		<title>
 			Xamarin.Auth with UWP
@@ -141,8 +141,8 @@
 			Windows 10
 		-->
 		<file
-			src="source\output\uwp\Xamarin.Auth.dll"
-			target="lib\uap10.0\Xamarin.Auth.dll"
+			src="source\output\uwp\**"
+			target="lib\uap10.0\"
 			>
 		</file>
 
