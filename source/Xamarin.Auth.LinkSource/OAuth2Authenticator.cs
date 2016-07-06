@@ -65,6 +65,14 @@ namespace Xamarin.Auth
             get { return accessTokenName; }
             set { accessTokenName = value; }
         }
+
+		/// <summary>
+		/// Gets or sets whether the client_id and client_secret values should be sent in the Authorization
+		/// header when requesting the access token, or whether they should go in the request body.
+		/// </summary>
+		/// <value>True if the header should be used, false if otherwise (existing behaviour).</value>
+		public bool ClientDetailsInHeader { get; set; }
+
         ///---------------------------------------------------------------------------------------
         # endregion
  
@@ -444,11 +452,15 @@ namespace Xamarin.Auth
                 { "grant_type", "authorization_code" },
                 { "code", code },
                 { "redirect_uri", redirectUrl.AbsoluteUri },
-                { "client_id", clientId },
             };
-            if (!string.IsNullOrEmpty (clientSecret)) {
-                queryValues ["client_secret"] = clientSecret;
-            }
+			if (!ClientDetailsInHeader)
+			{
+				queryValues["client_id"] = clientId;
+				if (!string.IsNullOrEmpty(clientSecret))
+				{
+					queryValues["client_secret"] = clientSecret;
+				}
+			}
 
             return RequestAccessTokenAsync (queryValues);
         }
@@ -463,8 +475,15 @@ namespace Xamarin.Auth
 			// mc++ changed protected to public for extension methods RefreshToken (Adrian Smith) 
             var content = new FormUrlEncodedContent (queryValues);
 
+			HttpClient client = new HttpClient();
 
-            HttpClient client = new HttpClient();
+			if (ClientDetailsInHeader)
+			{
+				var headerString = $"{clientId}:{clientSecret}";
+				var encodedHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(headerString));
+				client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encodedHeader);
+			}
+
             HttpResponseMessage response = await client.PostAsync (accessTokenUrl, content).ConfigureAwait (false);
             string text = await response.Content.ReadAsStringAsync().ConfigureAwait (false);
 
